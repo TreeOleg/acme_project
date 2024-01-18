@@ -9,3 +9,6 @@ class BirthdayForm(forms.Form):
     birthday = forms.DateField(
         label='День рождения', widget=forms.DateInput(attrs={'type': 'date'})
     )
+
+def lol():
+    return 2*2
