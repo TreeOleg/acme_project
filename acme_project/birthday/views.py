@@ -11,5 +11,5 @@ def birthday(request):
         birthday_countdown = calculate_birthday_countdown(
             form.cleaned_data['birthday']
         )
-        context.update({'birthday_countdown': birthday_countdown})
-    return render(request, 'birthday/birthday.html', context) 
+        context.update({'birthday_countdown': birthday_countdown}) 
+    return render(request, 'birthday/birthday.html', context=context)
