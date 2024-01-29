@@ -7,13 +7,16 @@ from django.shortcuts import get_object_or_404, redirect
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 
-from .forms import BirthdayForm, Congratulation
-from .models import Birthday
+from .forms import BirthdayForm, CongratulationForm
+from .models import Birthday, Congratulation
 from .utils import calculate_birthday_countdown
 
 
 class BirthdayListView(ListView):
     model = Birthday
+    queryset = Birthday.objects.prefetch_related(
+        'tags'
+    ).select_related('author')
     ordering = 'id'
     paginate_by = 10
 
@@ -55,12 +58,16 @@ class BirthdayDetailView(DetailView):
         context['birthday_countdown'] = calculate_birthday_countdown(
             self.object.birthday
         )
+        context['form'] = CongratulationForm()
+        context['congratulations'] = (
+            self.object.congratulations.select_related('author')
+        )
         return context
 
-@lodin_required
+@login_required
 def add_comment(request, pk):
     birthday = get_object_or_404(Birthday, pk=pk)
-    form = Congratulation(request.POST)
+    form = CongratulationForm(request.POST)
     if form.is_valid():
         congratulation = form.save(commit=False)
         congratulation.author = request.user
